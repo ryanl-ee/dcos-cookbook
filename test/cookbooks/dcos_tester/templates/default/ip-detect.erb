@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -o nounset -o errexit
+echo $(/usr/sbin/ip route show to match <%= @master_list[0] %> | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | tail -1)

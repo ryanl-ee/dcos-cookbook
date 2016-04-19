@@ -1,0 +1,17 @@
+---
+bootstrap_url: <%= @bootstrap_url %>
+cluster_name: <%= @cluster_name %>
+dns_search: <%= @dns_search %>
+exhibitor_storage_backend: <%= @storage_backend %>
+exhibitor_zk_hosts: <%= @zk_hosts.map{ |zk| "#{zk}:2181"}.join(',') %>
+exhibitor_zk_path: /dcos
+master_discovery: static
+master_list:
+<% @master_list.each do |master| -%>
+- <%= "#{master}" %>
+<% end -%>
+resolvers:
+<% @dns_resolvers.each do |resolver| -%>
+- <%= "#{resolver}" %>
+<% end -%>
+agent_list: []

@@ -1,0 +1,116 @@
+---
+driver:
+  name: vagrant
+  box: centos-7.2
+  box_url: http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-7.2_chef-provisionerless.box
+
+provisioner:
+  name: chef_zero
+
+# verifier:
+#   name: inspec
+
+platforms:
+  - name: bootstrap
+    driver_config:
+      customize:
+        memory: 2048
+      network:
+        - ["private_network", {ip: "192.168.33.10"}]
+    run_list:
+      - recipe[dcos_tester::bootstrap]
+      - recipe[zookeeper::default]
+      - recipe[exhibitor::default]
+      - recipe[exhibitor::service]
+      - recipe[export-node::default]
+    attributes:
+      dcos:
+        exhibitor:
+          zk_hosts: ['192.168.33.10']
+
+  - name: master-1
+    driver_config:
+      customize:
+        memory: 2048
+      network:
+        - ["private_network", {ip: "192.168.33.15"}]
+    run_list:
+      - recipe[dcos_tester::master]
+      - recipe[export-node::default]
+
+  - name: master-2
+    driver_config:
+      customize:
+        memory: 2048
+      network:
+        - ["private_network", {ip: "192.168.33.16"}]
+    run_list:
+      - recipe[dcos_tester::master]
+      - recipe[export-node::default]
+
+  - name: master-3
+    driver_config:
+      customize:
+        memory: 2048
+      network:
+        - ["private_network", {ip: "192.168.33.17"}]
+    run_list:
+      - recipe[dcos_tester::master]
+      - recipe[export-node::default]
+
+  - name: slave-1
+    driver_config:
+      customize:
+        memory: 2048
+      network:
+        - ["private_network", {ip: "192.168.33.20"}]
+    run_list:
+      - recipe[dcos_tester::slave]
+      - recipe[export-node::default]
+
+  - name: slave-2
+    driver_config:
+      customize:
+        memory: 2048
+      network:
+        - ["private_network", {ip: "192.168.33.21"}]
+    run_list:
+      - recipe[dcos_tester::slave]
+      - recipe[export-node::default]
+
+  - name: slave-3
+    driver_config:
+      customize:
+        memory: 2048
+      network:
+        - ["private_network", {ip: "192.168.33.22"}]
+    run_list:
+      - recipe[dcos_tester::slave]
+      - recipe[export-node::default]
+
+suites:
+  - name: 1m1s
+    run_list: []
+    attributes:
+      dcos:
+        master_list: ['192.168.33.15']
+    excludes:
+      - master-2
+      - master-3
+      - slave-2
+      - slave-3
+
+  - name: 1m3s
+    run_list: []
+    attributes:
+      dcos:
+        master_list: ['192.168.33.15']
+    excludes:
+      - master-2
+      - master-3
+
+  - name: 3m3s
+    run_list: []
+    attributes:
+      dcos:
+        master_list: ['192.168.33.15', '192.168.33.16', '192.168.33.17']

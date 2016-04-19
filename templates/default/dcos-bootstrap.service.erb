@@ -1,0 +1,11 @@
+[Unit]
+Description=dcos-bootstrap
+
+[Service]
+Type=simple
+ExecStart=<%= @python_path %> -m SimpleHTTPServer <%= node['dcos']['bootstrap']['port'] %>
+WorkingDirectory=<%= @data_path %>/genconf/serve
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,11 @@
+include_recipe 'dcos::_prep'
+
+include_recipe 'dcos_tester::_docker'
+
+service 'firewalld' do
+  action [:stop, :disable]
+end
+
+dcos node['dcos']['role'] do
+  install_script_url "#{node['dcos']['bootstrap']['url']}/dcos_install.sh"
+end
